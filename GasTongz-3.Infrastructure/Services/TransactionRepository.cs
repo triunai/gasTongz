@@ -1,5 +1,6 @@
 ﻿using _1_GasTongz.Domain.Entities;
 using _2_GasTongz.Application.Interfaces;
+using _3_GasTongz.Infrastructure.DbPersistance;
 using Dapper;
 using System.Data;
 
@@ -7,15 +8,18 @@ namespace _3_GasTongz.Infrastructure.Repos
 {
     public class TransactionRepository : ITransactionRepository
     {
-        private readonly IDbConnection _db;
+        private readonly DapperContext _context;
 
-        public TransactionRepository(IDbConnection db)
+        // Inject DapperContext instead of IDbConnection  
+        public TransactionRepository(DapperContext context)
         {
-            _db = db;
+            _context = context;
         }
 
         public async Task<int> CreateAsync(Transaction transaction)
         {
+            using var db = _context.CreateConnection(); // ✅ Create connection here  
+            db.Open();
             // 1) Insert the transaction header
             //    and capture the newly generated [Id]
             var sqlInsertTransaction = @"
@@ -48,7 +52,7 @@ namespace _3_GasTongz.Infrastructure.Repos
                 SELECT CAST(SCOPE_IDENTITY() as int);
             ";
 
-            var newTransactionId = await _db.ExecuteScalarAsync<int>(sqlInsertTransaction, new
+            var newTransactionId = await db.ExecuteScalarAsync<int>(sqlInsertTransaction, new
             {
                 ShopId = transaction.ShopId,
                 TransactionDate = transaction.TransactionDate,
@@ -90,7 +94,7 @@ namespace _3_GasTongz.Infrastructure.Repos
 
             foreach (var detail in transaction.TransactionDetails)
             {
-                await _db.ExecuteAsync(sqlInsertDetail, new
+                await db.ExecuteAsync(sqlInsertDetail, new
                 {
                     TransactionId = newTransactionId,
                     ProductId = detail.ProductId,
@@ -108,6 +112,9 @@ namespace _3_GasTongz.Infrastructure.Repos
 
         public async Task<Transaction?> GetByIdAsync(int transactionId)
         {
+            using var db = _context.CreateConnection(); // ✅ Create connection here  
+            db.Open();
+
             // 1) Fetch Transaction header
             var sqlTransaction = @"
                 SELECT
@@ -126,7 +133,7 @@ namespace _3_GasTongz.Infrastructure.Repos
                 WHERE t.[Id] = @Id;
             ";
 
-            var transaction = await _db.QueryFirstOrDefaultAsync<Transaction>(sqlTransaction, new { Id = transactionId });
+            var transaction = await db.QueryFirstOrDefaultAsync<Transaction>(sqlTransaction, new { Id = transactionId });
             if (transaction == null)
                 return null;
 
@@ -146,7 +153,7 @@ namespace _3_GasTongz.Infrastructure.Repos
                 WHERE d.[TransactionId] = @TransactionId;
             ";
 
-            var details = await _db.QueryAsync<TransactionDetail>(sqlDetails, new { TransactionId = transactionId });
+            var details = await db.QueryAsync<TransactionDetail>(sqlDetails, new { TransactionId = transactionId });
 
             // 3) Attach details to the transaction
             //    If your domain uses a private List<> you can do reflection or a specialized method

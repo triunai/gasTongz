@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using _2_GasTongz.Application.Interfaces;
+using FluentValidation;
 
 
 namespace _3_GasTongz.Infrastructure.Commands
@@ -22,6 +23,62 @@ namespace _3_GasTongz.Infrastructure.Commands
     ): IRequest<int>;
 
     public record LineItemDto(int ProductId, int Quantity, decimal UnitPrice);
+
+
+    public class CreateTransactionCommandValidator : AbstractValidator<CreateTransactionCommand>
+    {
+        public CreateTransactionCommandValidator()
+        {
+            // Validate ShopId
+            RuleFor(x => x.ShopId)
+                .GreaterThan(0)
+                .WithMessage("ShopId must be greater than zero.");
+
+            // Validate PaymentMethod
+            RuleFor(x => x.PaymentMethod)
+                .IsInEnum()
+                .WithMessage("Invalid payment method.");
+
+            // Validate LineItems
+            RuleFor(x => x.LineItems)
+                .NotEmpty()
+                .WithMessage("At least one line item is required.");
+
+            // Validate each LineItemDto
+            RuleForEach(x => x.LineItems).SetValidator(new LineItemDtoValidator());
+
+            // Validate UserId (optional, but if provided, should be greater than zero)
+            When(x => x.UserId.HasValue, () =>
+            {
+                RuleFor(x => x.UserId.Value)
+                    .GreaterThan(0)
+                    .WithMessage("UserId must be greater than zero.");
+            });
+        }
+    }
+
+    // FluentValidation for LineItemDto
+    public class LineItemDtoValidator : AbstractValidator<LineItemDto>
+    {
+        public LineItemDtoValidator()
+        {
+            // Validate ProductId
+            RuleFor(x => x.ProductId)
+                .GreaterThan(0)
+                .WithMessage("ProductId must be greater than zero.");
+
+            // Validate Quantity
+            RuleFor(x => x.Quantity)
+                .GreaterThan(0)
+                .WithMessage("Quantity must be greater than zero.");
+
+            // Validate UnitPrice
+            RuleFor(x => x.UnitPrice)
+                .GreaterThanOrEqualTo(0)
+                .WithMessage("UnitPrice cannot be negative.");
+        }
+    }
+
 
 
     // fluent validation goes here
