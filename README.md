@@ -45,13 +45,12 @@ src/
 │   ├── Enums/            # Enumerations (e.g., PaymentStatus, TongStatus)
 │   └── Events/           # Domain events (if event-driven DDD is applied)
 ├── Application/
-│   ├── Commands/         # CQRS commands (e.g., ProcessSaleCommand)
-│   ├── Queries/          # CQRS queries (e.g., GenerateReportQuery)
 │   ├── DTOs/             # Data Transfer Objects (request/response models)
 │   ├── Interfaces/       # Abstractions (e.g., IInventoryService)
-│   └── Validators/       # FluentValidation rules
 ├── Infrastructure/
-│   ├── Repositories/     # Dapper-based implementations (e.g., InventoryRepository)
+│   ├── Repositories/
+│   ├── Commands/         # CQRS commands with FluentVal (e.g., ProcessSaleCommand)
+│   ├── Queries/          # CQRS queries with FluentVal(e.g., GenerateReportQuery)    Dapper-based implementations (e.g.,         InventoryRepository)
 │   ├── ExternalServices/ # OCR and payment integration placeholders
 │   ├── Persistence/      # EF Core contexts (if added)
 │   └── Logging/          # Serilog or other logging configurations
