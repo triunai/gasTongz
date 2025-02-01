@@ -21,10 +21,7 @@ namespace _3_GasTongz.Infrastructure.Commands
         List<LineItemDto> LineItems,
         int? UserId
     ): IRequest<int>;
-
     public record LineItemDto(int ProductId, int Quantity, decimal UnitPrice);
-
-
     public class CreateTransactionCommandValidator : AbstractValidator<CreateTransactionCommand>
     {
         public CreateTransactionCommandValidator()
@@ -109,7 +106,7 @@ namespace _3_GasTongz.Infrastructure.Commands
                 paymentStatus: PaymentStatus.Pending,
                 totalAmount: 0m,
                 createdBy: command.UserId
-            );
+            ); 
 
             // 2. Add details
             foreach (var item in command.LineItems)
@@ -120,7 +117,7 @@ namespace _3_GasTongz.Infrastructure.Commands
                 var inventory = await _inventoryRepo.GetInventoryAsync(command.ShopId, item.ProductId);
                 try
                 {
-
+                  
                     if (inventory == null || inventory.Quantity < item.Quantity)
                     {
                         // dont throw exceptions

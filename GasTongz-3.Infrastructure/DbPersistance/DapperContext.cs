@@ -14,6 +14,7 @@ public class DapperContext
     private readonly IConfiguration _config;
     public DapperContext(IConfiguration config) => _config = config;
 
+    //todo: remove hardcoded string, go IOptions
     public IDbConnection CreateConnection() =>
         new SqlConnection(_config.GetConnectionString("HariShop")); // Your connection string name  
 }

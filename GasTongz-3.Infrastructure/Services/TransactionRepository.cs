@@ -22,6 +22,7 @@ namespace _3_GasTongz.Infrastructure.Repos
             db.Open();
             // 1) Insert the transaction header
             //    and capture the newly generated [Id]
+            // todo: convert to sp
             var sqlInsertTransaction = @"
                 INSERT INTO [dbo].[Transactions]
                 (
