@@ -1,0 +1,64 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34322.80
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GasTongz-4.API", "GasTongz-4.API.csproj", "{F43EE6F4-D1B9-4A28-A07F-3806DF229784}"
+	ProjectSection(ProjectDependencies) = postProject
+		{3E1F708E-C325-424F-BF2F-2C8E5DE10E03} = {3E1F708E-C325-424F-BF2F-2C8E5DE10E03}
+		{8D0A5092-0B3B-4459-87C0-77876B553A71} = {8D0A5092-0B3B-4459-87C0-77876B553A71}
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GasTongz-1.Domain", "..\GasTongz-1.Domain\GasTongz-1.Domain.csproj", "{CCBD9A4B-66F8-4C47-82B8-388300133A07}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GasTongz-2.Application", "..\GasTongz-2.Application\GasTongz-2.Application.csproj", "{DE7D0600-2400-4E14-949B-738E2267B33C}"
+	ProjectSection(ProjectDependencies) = postProject
+		{8D0A5092-0B3B-4459-87C0-77876B553A71} = {8D0A5092-0B3B-4459-87C0-77876B553A71}
+		{CCBD9A4B-66F8-4C47-82B8-388300133A07} = {CCBD9A4B-66F8-4C47-82B8-388300133A07}
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GasTongz-3.Infrastructure", "..\GasTongz-3.Infrastructure\GasTongz-3.Infrastructure.csproj", "{3E1F708E-C325-424F-BF2F-2C8E5DE10E03}"
+	ProjectSection(ProjectDependencies) = postProject
+		{CCBD9A4B-66F8-4C47-82B8-388300133A07} = {CCBD9A4B-66F8-4C47-82B8-388300133A07}
+		{DE7D0600-2400-4E14-949B-738E2267B33C} = {DE7D0600-2400-4E14-949B-738E2267B33C}
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GasTongz.Shared", "..\GasTongz.Shared\GasTongz.Shared.csproj", "{8D0A5092-0B3B-4459-87C0-77876B553A71}"
+	ProjectSection(ProjectDependencies) = postProject
+		{CCBD9A4B-66F8-4C47-82B8-388300133A07} = {CCBD9A4B-66F8-4C47-82B8-388300133A07}
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F43EE6F4-D1B9-4A28-A07F-3806DF229784}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F43EE6F4-D1B9-4A28-A07F-3806DF229784}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F43EE6F4-D1B9-4A28-A07F-3806DF229784}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F43EE6F4-D1B9-4A28-A07F-3806DF229784}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CCBD9A4B-66F8-4C47-82B8-388300133A07}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CCBD9A4B-66F8-4C47-82B8-388300133A07}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CCBD9A4B-66F8-4C47-82B8-388300133A07}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CCBD9A4B-66F8-4C47-82B8-388300133A07}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DE7D0600-2400-4E14-949B-738E2267B33C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DE7D0600-2400-4E14-949B-738E2267B33C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DE7D0600-2400-4E14-949B-738E2267B33C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DE7D0600-2400-4E14-949B-738E2267B33C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3E1F708E-C325-424F-BF2F-2C8E5DE10E03}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3E1F708E-C325-424F-BF2F-2C8E5DE10E03}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3E1F708E-C325-424F-BF2F-2C8E5DE10E03}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3E1F708E-C325-424F-BF2F-2C8E5DE10E03}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8D0A5092-0B3B-4459-87C0-77876B553A71}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8D0A5092-0B3B-4459-87C0-77876B553A71}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8D0A5092-0B3B-4459-87C0-77876B553A71}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8D0A5092-0B3B-4459-87C0-77876B553A71}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {39D02F40-FD21-42A2-AA6F-DE1D424E25E0}
+	EndGlobalSection
+EndGlobal
