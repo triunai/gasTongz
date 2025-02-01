@@ -29,15 +29,16 @@ namespace _1_GasTongz.Domain.Entities
             Description = description;
             Status = 'A'; // default "Active"
             CreatedBy = createdBy;
-            CreatedAt = DateTime.UtcNow;
-            UpdatedAt = DateTime.UtcNow;
+            CreatedAt = DateTime.Now;
+            UpdatedAt = DateTime.Now;
         }
 
         public void Deactivate(int? userId)
         {
             Status = 'I';
             UpdatedBy = userId;
-            UpdatedAt = DateTime.UtcNow;
+            UpdatedAt = DateTime.
+                Now;
         }
     }
 }

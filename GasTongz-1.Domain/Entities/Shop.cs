@@ -23,8 +23,8 @@ namespace _1_GasTongz.Domain.Entities
             Name = name;
             Location = location;
             CreatedBy = createdBy;
-            CreatedAt = DateTime.UtcNow;
-            UpdatedAt = DateTime.UtcNow;
+            CreatedAt = DateTime.Now;
+            UpdatedAt = DateTime.Now;
             // UpdatedBy can remain null until something changes
         }
 
@@ -33,7 +33,7 @@ namespace _1_GasTongz.Domain.Entities
             Name = newName;
             Location = newLocation;
             UpdatedBy = userId;
-            UpdatedAt = DateTime.UtcNow;
+            UpdatedAt = DateTime.Now;
         }
     }
 

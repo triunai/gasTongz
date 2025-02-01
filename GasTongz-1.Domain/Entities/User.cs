@@ -8,7 +8,7 @@ namespace _1_GasTongz.Domain.Entities
 {
     public class User
     {
-        //yet to add auth to this
+        //todo: add authentication
         public int Id { get; private set; }
         public string Username { get; private set; } = default!;
         public string? Email { get; private set; }
@@ -21,14 +21,14 @@ namespace _1_GasTongz.Domain.Entities
         {
             Username = username;
             Email = email;
-            CreatedAt = DateTime.UtcNow;
-            UpdatedAt = DateTime.UtcNow;
+            CreatedAt = DateTime.Now;
+            UpdatedAt = DateTime.Now;
         }
 
         public void UpdateEmail(string newEmail)
         {
             Email = newEmail;
-            UpdatedAt = DateTime.UtcNow;
+            UpdatedAt = DateTime.Now;
         }
     }
 }

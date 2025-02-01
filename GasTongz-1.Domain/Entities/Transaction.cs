@@ -32,16 +32,18 @@ namespace _1_GasTongz.Domain.Entities
                            decimal totalAmount, int? createdBy)
         {
             ShopId = shopId;
-            TransactionDate = DateTime.UtcNow;
+            TransactionDate = DateTime.Now;  
             PaymentMethod = paymentMethod;
             PaymentStatus = paymentStatus;
             TotalAmount = totalAmount;
 
             CreatedBy = createdBy;
-            CreatedAt = DateTime.UtcNow;
-            UpdatedAt = DateTime.UtcNow;
+            CreatedAt = DateTime.Now;
+            UpdatedAt = DateTime.Now;
         }
 
+
+        // todo: Validtation: these methods are DOGSHIT until you add validation
         public void AddDetail(int productId, int quantity, decimal unitPrice, int? userId)
         {
             // Optionally, validate that product + quantity is in stock, etc.
@@ -53,21 +55,21 @@ namespace _1_GasTongz.Domain.Entities
 
             // Update timestamps
             UpdatedBy = userId;
-            UpdatedAt = DateTime.UtcNow;
+            UpdatedAt = DateTime.Now;
         }
 
         public void MarkPaymentSuccess(int? userId)
         {
             PaymentStatus = PaymentStatus.Success;
             UpdatedBy = userId;
-            UpdatedAt = DateTime.UtcNow;
+            UpdatedAt = DateTime.Now;
         }
 
         public void SetReceiptImagePath(string path, int? userId)
         {
             ReceiptImagePath = path;
             UpdatedBy = userId;
-            UpdatedAt = DateTime.UtcNow;
+            UpdatedAt = DateTime.Now;
         }
         public void AddLoadedDetail(TransactionDetail detail)
         {

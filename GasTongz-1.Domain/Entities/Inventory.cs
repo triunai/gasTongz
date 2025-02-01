@@ -22,6 +22,7 @@ namespace _1_GasTongz.Domain.Entities
 
         private Inventory() { }
 
+        // ctor for fresh stock
         public Inventory(int shopId, int productId, int quantity, char status, int? createdBy)
         {
             ShopId = shopId;
@@ -29,25 +30,28 @@ namespace _1_GasTongz.Domain.Entities
             Quantity = quantity;
             Status = status;
             CreatedBy = createdBy;
-            CreatedAt = DateTime.UtcNow;
-            UpdatedAt = DateTime.UtcNow;
+            CreatedAt = DateTime.Now;
+            UpdatedAt = DateTime.Now;
         }
 
         public void UpdateQuantity(int newQuantity, int? userId)
         {
             if (newQuantity < 0)
-                throw new ArgumentException("Quantity cannot be negative.");
+            {
+                Console.WriteLine("Update quantity error, new quantity is lower than 0");
+                return;
+            }
 
             Quantity = newQuantity;
             UpdatedBy = userId;
-            UpdatedAt = DateTime.UtcNow;
+            UpdatedAt = DateTime.Now;
         }
 
         public void ChangeStatus(char newStatus, int? userId)
         {
             Status = newStatus;
             UpdatedBy = userId;
-            UpdatedAt = DateTime.UtcNow;
+            UpdatedAt = DateTime.Now;
         }
     }
 }

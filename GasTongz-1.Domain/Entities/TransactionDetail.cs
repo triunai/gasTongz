@@ -27,8 +27,8 @@ namespace _1_GasTongz.Domain.Entities
             UnitPrice = unitPrice;
 
             CreatedBy = userId;
-            CreatedAt = DateTime.UtcNow;
-            UpdatedAt = DateTime.UtcNow;
+            CreatedAt = DateTime.Now;
+            UpdatedAt = DateTime.Now;
         }
     }
 }
