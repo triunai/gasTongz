@@ -1,6 +1,5 @@
 ﻿using _1_GasTongz.Domain.Entities;
 using _1_GasTongz.Domain.Enums;
-using _3_GasTongz.Infrastructure.Commands;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -12,7 +11,7 @@ using _2_GasTongz.Application.Interfaces;
 using FluentValidation;
 
 
-namespace _3_GasTongz.Infrastructure.Commands
+namespace Commands.Transaction
 {
     // Application/Commands/CreateTransactionCommand.cs
     public record CreateTransactionCommand(
@@ -20,8 +19,11 @@ namespace _3_GasTongz.Infrastructure.Commands
         PaymentMethod PaymentMethod,
         List<LineItemDto> LineItems,
         int? UserId
-    ): IRequest<int>;
-    public record LineItemDto(int ProductId, int Quantity, decimal UnitPrice);
+    ) : IRequest<int>;
+    public record LineItemDto(
+        int ProductId,
+        int Quantity,
+        decimal UnitPrice);
     public class CreateTransactionCommandValidator : AbstractValidator<CreateTransactionCommand>
     {
         public CreateTransactionCommandValidator()
@@ -100,13 +102,13 @@ namespace _3_GasTongz.Infrastructure.Commands
         public async Task<int> Handle(CreateTransactionCommand command, CancellationToken ct)
         {
             // 1. Create domain entity
-            var transaction = new Transaction(
+            var transaction = new _1_GasTongz.Domain.Entities.Transaction(
                 shopId: command.ShopId,
                 paymentMethod: command.PaymentMethod,
                 paymentStatus: PaymentStatus.Pending,
-                totalAmount: 0m,
+                totalAmount: 0m, // init total to 0
                 createdBy: command.UserId
-            ); 
+            );
 
             // 2. Add details
             foreach (var item in command.LineItems)
@@ -117,7 +119,7 @@ namespace _3_GasTongz.Infrastructure.Commands
                 var inventory = await _inventoryRepo.GetInventoryAsync(command.ShopId, item.ProductId);
                 try
                 {
-                  
+
                     if (inventory == null || inventory.Quantity < item.Quantity)
                     {
                         // dont throw exceptions
