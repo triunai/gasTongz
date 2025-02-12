@@ -1,4 +1,5 @@
 ﻿using _1_GasTongz.Domain.Entities;
+using _1_GasTongz.Domain.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,9 +21,14 @@ namespace _2_GasTongz.Application.Interfaces
     /// </summary>
     Task<Transaction?> GetByIdAsync(int transactionId);
 
-    // Optionally, you might add more methods for updating, listing, etc.
-    // Task UpdateAsync(Transaction transaction);
-    // Task<IEnumerable<Transaction>> GetAllAsync();
+    Task<int> CreateTransactionWithInventoryUpdate(
+        int shopId,
+        PaymentMethod paymentMethod,
+        string lineItemsJson,
+        int? userId
+    );
     }
+
+
 
 }

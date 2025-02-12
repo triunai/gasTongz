@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using _2_GasTongz.Application.Interfaces;
 using FluentValidation;
+using Newtonsoft.Json;
 
 
 namespace Commands.Transaction
@@ -81,70 +82,31 @@ namespace Commands.Transaction
 
 
     // fluent validation goes here
-    public class CreateTransactionCommandHandler
-    : IRequestHandler<CreateTransactionCommand, int> // returns new Transaction.Id
+    public class CreateTransactionCommandHandler : IRequestHandler<CreateTransactionCommand, int>
     {
         private readonly ITransactionRepository _transactionRepo;
-        private readonly IInventoryRepository _inventoryRepo;
         private readonly ILogger<CreateTransactionCommandHandler> _logger;
-
 
         public CreateTransactionCommandHandler(
             ITransactionRepository transactionRepo,
-            IInventoryRepository inventoryRepo,
             ILogger<CreateTransactionCommandHandler> logger)
         {
             _transactionRepo = transactionRepo;
-            _inventoryRepo = inventoryRepo;
             _logger = logger;
         }
 
-        public async Task<int> Handle(CreateTransactionCommand command, CancellationToken ct)
+        public async Task<int> Handle(CreateTransactionCommand command, CancellationToken cancellationToken)
         {
-            // 1. Create domain entity
-            var transaction = new _1_GasTongz.Domain.Entities.Transaction(
-                shopId: command.ShopId,
-                paymentMethod: command.PaymentMethod,
-                paymentStatus: PaymentStatus.Pending,
-                totalAmount: 0m, // init total to 0
-                createdBy: command.UserId
+            // Serialize LineItems to JSON
+            var lineItemsJson = JsonConvert.SerializeObject(command.LineItems);
+
+            // Call the stored procedure via repository
+            return await _transactionRepo.CreateTransactionWithInventoryUpdate(
+                command.ShopId,
+                command.PaymentMethod,
+                lineItemsJson,
+                command.UserId
             );
-
-            // 2. Add details
-            foreach (var item in command.LineItems)
-            {
-                transaction.AddDetail(item.ProductId, item.Quantity, item.UnitPrice, command.UserId);
-
-                // deduct inventory
-                var inventory = await _inventoryRepo.GetInventoryAsync(command.ShopId, item.ProductId);
-                try
-                {
-
-                    if (inventory == null || inventory.Quantity < item.Quantity)
-                    {
-                        // dont throw exceptions
-                        //throw new Exception("Insufficient stock.");
-                        _logger.LogWarning("inventory is empty in db or your quantity was too much");
-
-                    }
-                    inventory.UpdateQuantity(inventory.Quantity - item.Quantity, command.UserId);
-                    await _inventoryRepo.UpdateAsync(inventory);
-                }
-
-                catch (Exception ex)
-                {
-                    _logger.LogWarning(ex, "Something failed while updating inventory for ShopId: {ShopId}, ProductId: {ProductId}",
-                        command.ShopId, item.ProductId);
-                }
-
-            }
-
-            // 3. Mark payment success or keep pending?
-            // transaction.MarkPaymentSuccess(command.UserId);
-
-            // 4. Save transaction
-            var newId = await _transactionRepo.CreateAsync(transaction);
-            return newId;
         }
     }
 

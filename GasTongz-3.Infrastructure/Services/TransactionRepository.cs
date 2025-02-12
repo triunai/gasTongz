@@ -1,4 +1,5 @@
 ﻿using _1_GasTongz.Domain.Entities;
+using _1_GasTongz.Domain.Enums;
 using _2_GasTongz.Application.Interfaces;
 using _3_GasTongz.Infrastructure.DbPersistance;
 using Dapper;
@@ -169,5 +170,29 @@ namespace _3_GasTongz.Infrastructure.Repos
 
             return transaction;
         }
-    }
+
+        public async Task<int> CreateTransactionWithInventoryUpdate(
+            int shopId,
+            PaymentMethod paymentMethod,
+            string lineItemsJson,
+            int? userId
+        )
+                {
+                    using var db = _context.CreateConnection();
+                    db.Open();
+
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@ShopId", shopId);
+                    parameters.Add("@PaymentMethod", paymentMethod.ToString());
+                    parameters.Add("@LineItems", lineItemsJson);
+                    parameters.Add("@UserId", userId);
+
+                    // Use Dapper's stored procedure execution
+                    return await db.QuerySingleAsync<int>(
+                        "CreateTransactionWithInventoryUpdate",
+                        parameters,
+                        commandType: CommandType.StoredProcedure
+                    );
+                }
+            }
 }
