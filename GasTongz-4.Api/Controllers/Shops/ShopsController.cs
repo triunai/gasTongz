@@ -1,5 +1,7 @@
 ﻿using _1_GasTongz.Domain.Entities;
 using _2_GasTongz.Application.Interfaces;
+using _3_GasTongz.Infrastructure.Commands.Shops;
+using _3_GasTongz.Infrastructure.Queries.Shops;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -11,36 +13,16 @@ namespace _4_GasTongz.API.Controllers
     [ApiController]
     public class ShopsController : BaseController
     {
-        private readonly IShopRepository _shopRepository;
-
-        // Injecting IShopRepository along with the usual BaseController dependencies.
-        public ShopsController(IMediator mediator, ILogger<BaseController> logger, IShopRepository shopRepository)
-            : base(mediator, logger)
-        {
-            _shopRepository = shopRepository;
-        }
-
+        public ShopsController(IMediator mediator, ILogger<BaseController> logger)
+                   : base(mediator, logger) { }
         /// <summary>
         /// Creates a new shop.
         /// POST /shops
         /// </summary>
         [HttpPost]
-        public async Task<IActionResult> CreateShop([FromBody] Shop shop)
+        public async Task<IActionResult> CreateShop([FromBody] CreateShopCommand command)
         {
-            // Minimal parameter validation; can be extended via FluentValidation.
-            if (string.IsNullOrWhiteSpace(shop.Name))
-            {
-                return BadRequestResponse("Shop name must not be empty.");
-            }
-
-            // Create the shop using the repository.
-            var newId = await _shopRepository.CreateAsync(shop);
-
-            // Optionally, retrieve the newly created shop record.
-            var createdShop = await _shopRepository.GetByIdAsync(newId);
-
-            // Return a 201 Created response with the new shop data.
-            return CreatedResponse(createdShop, $"api/shops/{newId}", "Shop created successfully");
+            return await SendRequest(command, "Shop created successfully");
         }
 
         /// <summary>
@@ -50,8 +32,7 @@ namespace _4_GasTongz.API.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllShops()
         {
-            var shops = await _shopRepository.GetAllAsync();
-            return SuccessResponse(shops, "Shops retrieved successfully");
+            return await SendRequest(new GetShopsQuery(), "Shops retrieved successfully");
         }
 
         /// <summary>
@@ -63,16 +44,10 @@ namespace _4_GasTongz.API.Controllers
         {
             if (id <= 0)
             {
-                return BadRequestResponse("Invalid shop ID.");
+                return BadRequest("Invalid shop ID.");
             }
 
-            var shop = await _shopRepository.GetByIdAsync(id);
-            if (shop == null)
-            {
-                return NotFoundResponse("Shop not found.");
-            }
-
-            return SuccessResponse(shop, "Shop retrieved successfully");
+            return await SendRequest(new GetShopByIdQuery(id), "Shop retrieved successfully");
         }
     }
 }

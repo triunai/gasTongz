@@ -97,6 +97,7 @@ namespace Commands.Transaction
 
         public async Task<int> Handle(CreateTransactionCommand command, CancellationToken cancellationToken)
         {
+            // todo: Write explicit fluent validation validators here, or ask ai
             // Serialize LineItems to JSON
             var lineItemsJson = JsonConvert.SerializeObject(command.LineItems);
 

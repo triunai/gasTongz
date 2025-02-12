@@ -28,5 +28,10 @@ namespace _2_GasTongz.Application.Interfaces
     /// </summary>
     /// <returns>A collection of Shop entities.</returns>
     Task<IEnumerable<Shop>> GetAllAsync();
-}
+
+    
+    // literally just used to check for duplicates in CreateTransactionCommand
+    Task<Shop?> GetByNameAsync(string name);
+
+    }
 }

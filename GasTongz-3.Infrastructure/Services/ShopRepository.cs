@@ -103,5 +103,16 @@ namespace _3_GasTongz.Infrastructure.Repos
 
             return await db.QueryAsync<Shop>(sql);
         }
+
+        public async Task<Shop?> GetByNameAsync(string name)
+        {
+            using var db = _context.CreateConnection();
+            db.Open();
+            var sql = @"
+        SELECT TOP 1 *
+        FROM [dbo].[Shops]
+        WHERE [Name] = @Name";
+            return await db.QueryFirstOrDefaultAsync<Shop>(sql, new { Name = name });
+        }
     }
 }
