@@ -115,7 +115,7 @@ namespace Commands.Transaction
             {
                 transaction.AddDetail(item.ProductId, item.Quantity, item.UnitPrice, command.UserId);
 
-                // Optionally deduct inventory
+                // deduct inventory
                 var inventory = await _inventoryRepo.GetInventoryAsync(command.ShopId, item.ProductId);
                 try
                 {
@@ -124,6 +124,7 @@ namespace Commands.Transaction
                     {
                         // dont throw exceptions
                         //throw new Exception("Insufficient stock.");
+                        _logger.LogWarning("inventory is empty in db or your quantity was too much");
 
                     }
                     inventory.UpdateQuantity(inventory.Quantity - item.Quantity, command.UserId);

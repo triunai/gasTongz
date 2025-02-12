@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace _2_GasTongz.Application
+namespace _3_GasTongz.Infrastructure
 {
 
     // to reference in mediator

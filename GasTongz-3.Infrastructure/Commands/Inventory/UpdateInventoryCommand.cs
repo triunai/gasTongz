@@ -1,4 +1,5 @@
 ﻿using _2_GasTongz.Application.Interfaces;
+using Commands.Inventory;
 using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.Logging;
@@ -33,9 +34,15 @@ namespace Commands.Inventory
             RuleFor(c => c.NewQuantity)
                 .GreaterThanOrEqualTo(0)
                 .WithMessage("NewQuantity must be zero or greater.");
-            // Optionally, validate NewStatus if there is a defined set of allowed characters.
+            RuleFor(c => c.NewStatus)
+                .Must(CheckValidStatus).WithMessage("'NewStatus' must be either 'E' or 'F'.");
+        }
+        private bool CheckValidStatus(char status)
+        {
+            return status == 'E' || status == 'F';
         }
     }
+}
 
     // Handler for the command
     public class UpdateInventoryCommandHandler : IRequestHandler<UpdateInventoryCommand, Unit>
@@ -80,4 +87,4 @@ namespace Commands.Inventory
             }
         }
     }
-}
+
