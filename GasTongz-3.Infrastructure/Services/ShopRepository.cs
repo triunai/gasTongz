@@ -3,17 +3,20 @@ using _2_GasTongz.Application.Interfaces;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Dapper;
-using _3_GasTongz.Infrastructure.DbPersistance; 
+using _3_GasTongz.Infrastructure.DbPersistance;
+using Microsoft.Extensions.Logging;
 
 namespace _3_GasTongz.Infrastructure.Repos
 {
     public class ShopRepository : IShopRepository
     {
         private readonly DapperContext _context;
+        private readonly ILogger<ShopRepository> _logger;
 
-        public ShopRepository(DapperContext context)
+        public ShopRepository(DapperContext context, ILogger <ShopRepository> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         /// <summary>
@@ -73,9 +76,10 @@ namespace _3_GasTongz.Infrastructure.Repos
                     [CreatedAt],
                     [CreatedBy],
                     [UpdatedAt],
-                    [UpdatedBy]
+                    [UpdatedBy],
+                    [isDeleted]
                 FROM [dbo].[Shops]
-                WHERE [Id] = @Id;
+                WHERE [Id] = @Id AND [IsDeleted] = 0;;
             ";
 
             return await db.QueryFirstOrDefaultAsync<Shop>(sql, new { Id = shopId });
@@ -96,8 +100,10 @@ namespace _3_GasTongz.Infrastructure.Repos
                     [CreatedAt],
                     [CreatedBy],
                     [UpdatedAt],
-                    [UpdatedBy]
+                    [UpdatedBy],
+                    [isDeleted]
                 FROM [dbo].[Shops]
+                WHERE [IsDeleted] = 0
                 ORDER BY [Name];
             ";
 
@@ -109,10 +115,53 @@ namespace _3_GasTongz.Infrastructure.Repos
             using var db = _context.CreateConnection();
             db.Open();
             var sql = @"
-        SELECT TOP 1 *
-        FROM [dbo].[Shops]
-        WHERE [Name] = @Name";
+                SELECT TOP 1 *
+                FROM [dbo].[Shops]
+                WHERE [Name] = @Name AND [IsDeleted] = 0;";
             return await db.QueryFirstOrDefaultAsync<Shop>(sql, new { Name = name });
+        }
+
+        public async Task UpdateAsync(Shop shop)
+        {
+            var existingShop = await GetByIdAsync(shop.Id);
+
+            if (existingShop == null)
+            {
+                _logger.LogError("Shop not found in get.");
+            }
+
+            if (existingShop.IsDeleted)
+            {
+                _logger.LogError("Cannot update a deleted shop.");
+            }
+            using var db = _context.CreateConnection();
+            db.Open();
+            var sql = @"
+                UPDATE [dbo].[Shops]
+                SET 
+                    [Name] = @Name,
+                    [Location] = @Location,
+                    [UpdatedAt] = GETDATE(),
+                    [UpdatedBy] = @UpdatedBy
+                WHERE [Id] = @Id";
+
+            await db.ExecuteAsync(sql, new
+            {
+                Id = shop.Id,
+                Name = shop.Name,
+                Location = shop.Location,
+                UpdatedBy = shop.UpdatedBy
+            });
+        }
+
+        public async Task DeleteAsync(int shopId)
+        {
+            using var db = _context.CreateConnection();
+            db.Open();
+            var sql = @"UPDATE [dbo].[Shops]  
+                        SET [isDeleted] = 1  
+                        WHERE [Id] =@Id;";
+            await db.ExecuteAsync(sql, new { Id = shopId });
         }
     }
 }

@@ -44,25 +44,37 @@ public class CreateShopCommandHandler : IRequestHandler<CreateShopCommand, int>
 
     public async Task<int> Handle(CreateShopCommand command, CancellationToken cancellationToken)
     {
-        var validator = new CreateShopCommandValidator();
-        var validationResult = await validator.ValidateAsync(command);
-        if (!validationResult.IsValid)
+        try 
         {
-            _logger.LogWarning("fluent validation failed");
-        }
+            var validator = new CreateShopCommandValidator();
+            var validationResult = await validator.ValidateAsync(command);
+            if (!validationResult.IsValid)
+            {
+                _logger.LogWarning("fluent validation failed");
+                return 0;
+            }
 
-        var existingShop = await _shopRepository.GetByNameAsync(command.Name);
-        if (existingShop != null)
+            var existingShop = await _shopRepository.GetByNameAsync(command.Name);
+            if (existingShop != null)
+            {
+                _logger.LogWarning("A shop with this name already exists.");
+                return 0;
+            }
+            // Use the public constructor to create the Shop instance
+            var shop = new Shop(
+                command.Name,
+                command.Location,
+                command.CreatedBy);
+
+            return await _shopRepository.CreateAsync(shop);
+        }
+        
+
+        catch (Exception ex)
         {
-            _logger.LogWarning("A shop with this name already exists.");
+            _logger.LogError(ex, "Error creating shop.");
+            throw;
         }
-        // Use the public constructor to create the Shop instance
-        var shop = new Shop(
-            command.Name, 
-            command.Location, 
-            command.CreatedBy);
-
-        return await _shopRepository.CreateAsync(shop);
     }
 
 }

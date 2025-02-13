@@ -66,6 +66,15 @@ namespace _4_GasTongz.API.Controllers
             try
             {
                 var response = await _mediator.Send(request);
+                if (response == null)
+                {
+                    return NotFoundResponse("Resource not found");
+                }
+                if (response is int id && id == 0)
+                {
+                    return BadRequestResponse("Operation failed.");
+                }
+
                 return SuccessResponse(response, successMessage);
             }
             catch (Exception ex)

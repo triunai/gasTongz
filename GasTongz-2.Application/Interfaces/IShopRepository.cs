@@ -33,5 +33,9 @@ namespace _2_GasTongz.Application.Interfaces
     // literally just used to check for duplicates in CreateTransactionCommand
     Task<Shop?> GetByNameAsync(string name);
 
+
+    Task UpdateAsync(Shop shop);
+    Task DeleteAsync(int shopId);
+
     }
 }

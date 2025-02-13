@@ -12,7 +12,7 @@ namespace _4_GasTongz.API.Controllers
     [Route("api/[controller]")]
     [ApiController]
     public class ShopsController : BaseController
-    {
+    { 
         public ShopsController(IMediator mediator, ILogger<BaseController> logger)
                    : base(mediator, logger) { }
         /// <summary>
@@ -48,6 +48,41 @@ namespace _4_GasTongz.API.Controllers
             }
 
             return await SendRequest(new GetShopByIdQuery(id), "Shop retrieved successfully");
+        }
+
+        /// <summary>
+        /// Updates an existing shop.
+        /// PUT /shops/{id}
+        /// </summary>
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateShop(int id, [FromBody] UpdateShopCommand command)
+        {
+            if (id <= 0)
+            {
+                return BadRequest("Invalid shop ID.");
+            }
+
+            if (id != command.Id)
+            {
+                return BadRequest("URL ID and command ID do not match.");
+            }
+
+            return await SendRequest(command, "Shop updated successfully");
+        }
+
+        /// <summary>
+        /// Deletes a shop (soft delete).
+        /// DELETE /shops/{id}
+        /// </summary>
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteShop(int id)
+        {
+            if (id <= 0)
+            {
+                return BadRequest("Invalid shop ID.");
+            }
+
+            return await SendRequest(new DeleteShopCommand(id), "Shop deleted successfully");
         }
     }
 }

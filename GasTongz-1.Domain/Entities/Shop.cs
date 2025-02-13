@@ -15,6 +15,7 @@ namespace _1_GasTongz.Domain.Entities
         public int? CreatedBy { get; private set; }
         public DateTime UpdatedAt { get; private set; }
         public int? UpdatedBy { get; private set; }
+        public bool IsDeleted { get; private set; }
 
         private Shop() { }
 
