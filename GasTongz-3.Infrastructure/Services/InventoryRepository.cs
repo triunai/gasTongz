@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Dapper;
 using _3_GasTongz.Infrastructure.DbPersistance;
 using Microsoft.Extensions.Logging;
+using static _2_GasTongz.Application.DTOs.ViewModels.ViewModels;
 
 namespace _3_GasTongz.Infrastructure.Repos
 {
@@ -219,6 +220,22 @@ namespace _3_GasTongz.Infrastructure.Repos
                 FROM [dbo].[Inventory]
                 WHERE [ShopId] = @ShopId AND [ProductId] = @ProductId";
             return await db.QueryFirstOrDefaultAsync<Inventory>(sql, new { ShopId = shopId, ProductId = productId });
+        }
+        public async Task<List<LowStockInventoryViewModel>> GetLowStockInventory()
+        {
+            using var db = _context.CreateConnection();
+            db.Open();
+
+            var sql = @"
+            SELECT 
+                i.ProductId, 
+                p.Name AS ProductName, 
+                i.Quantity 
+            FROM Inventory i
+            INNER JOIN Products p ON i.ProductId = p.Id
+            WHERE i.Quantity < 10";
+
+            return (await db.QueryAsync<LowStockInventoryViewModel>(sql)).ToList();
         }
     }
 }

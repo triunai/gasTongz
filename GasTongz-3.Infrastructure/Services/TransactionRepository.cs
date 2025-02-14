@@ -4,6 +4,9 @@ using _2_GasTongz.Application.Interfaces;
 using _3_GasTongz.Infrastructure.DbPersistance;
 using Dapper;
 using System.Data;
+using static _2_GasTongz.Application.DTOs.Reports.ReportDtos;
+using static _2_GasTongz.Application.DTOs.ViewModels.ViewModels;
+using System.Globalization;
 
 namespace _3_GasTongz.Infrastructure.Repos
 {
@@ -194,5 +197,61 @@ namespace _3_GasTongz.Infrastructure.Repos
                         commandType: CommandType.StoredProcedure
                     );
                 }
-            }
+
+        public async Task<SalesSummaryViewModel> GetSalesSummary()
+        {
+            using var db = _context.CreateConnection();
+            db.Open();
+
+            var sql = @"
+            SELECT 
+                SUM(TotalAmount) AS TotalSales, 
+                AVG(TotalAmount) AS AverageTransaction 
+            FROM Transactions";
+
+            var result = await db.QueryFirstAsync<SalesSummaryDto>(sql);
+
+            return new SalesSummaryViewModel
+            {
+                TotalSales = result.TotalSales,
+                AverageTransaction = result.AverageTransaction
+            };
+        }
+
+        public async Task<List<MonthlySalesViewModel>> GetMonthlySales()
+        {
+            using var db = _context.CreateConnection();
+            db.Open();
+
+            var sql = @"
+                SELECT 
+                    YEAR([Date]) AS [Year], 
+                    MONTH([Date]) AS [Month], 
+                    SUM([TotalAmount]) AS [SalesAmount]
+                FROM [Transactions]
+                GROUP BY YEAR([Date]), MONTH([Date])
+                ORDER BY [Year], [Month]";
+
+            var monthlySales = await db.QueryAsync<MonthlySalesDto>(sql);
+
+            return monthlySales.Select(dto =>
+            {
+                var monthName = DateTimeFormatInfo.CurrentInfo.GetMonthName(dto.Month);
+                return new MonthlySalesViewModel
+                {
+                    Month = $"{monthName} {dto.Year}",
+                    SalesAmount = dto.SalesAmount
+                };
+            }).ToList();
+        }
+
+
+        private string GetMonthName(string month)
+        {
+            int monthNumber = int.Parse(month.Split('-')[1]);
+            return DateTimeFormatInfo.CurrentInfo.GetMonthName(monthNumber);
+        }
+    }
+
+
 }

@@ -2,6 +2,7 @@
 using _3_GasTongz.Infrastructure;
 using _3_GasTongz.Infrastructure.Commands.Inventory;
 using _3_GasTongz.Infrastructure.Queries.Inventory;
+using _3_GasTongz.Infrastructure.Queries.Inventory.StockLevel;
 using Commands.Inventory;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -75,6 +76,12 @@ namespace _4_GasTongz.API.Controllers.Inventory
             return await SendRequest(
                 new GetAllInventoriesQuery(),
                 "Inventories retrieved successfully");
+        }
+
+        [HttpGet("low-stock")]
+        public async Task<IActionResult> GetLowStockInventory()
+        {
+            return await SendRequest(new GetLowStockInventoryQuery(), "Low stock inventory retrieved");
         }
     }
 }

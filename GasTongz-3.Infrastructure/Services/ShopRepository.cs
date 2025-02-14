@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Dapper;
 using _3_GasTongz.Infrastructure.DbPersistance;
 using Microsoft.Extensions.Logging;
-
+using System.Globalization;
 namespace _3_GasTongz.Infrastructure.Repos
 {
     public class ShopRepository : IShopRepository
@@ -163,5 +163,7 @@ namespace _3_GasTongz.Infrastructure.Repos
                         WHERE [Id] =@Id;";
             await db.ExecuteAsync(sql, new { Id = shopId });
         }
+
+
     }
 }

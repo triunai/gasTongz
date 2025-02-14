@@ -3,6 +3,7 @@ using Commands.Transaction;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Queries.Transactions;
+using Queries.Transactions.Sales;
 
 namespace _4_GasTongz.API.Controllers.Transaction
 {
@@ -35,6 +36,18 @@ namespace _4_GasTongz.API.Controllers.Transaction
             var query = new GetTransactionByIdQuery(transactionId);
             // Send the query via MediatR using the BaseController's SendRequest helper.
             return await SendRequest(query, "Transaction retrieved successfully");
+        }
+
+        [HttpGet("summary")]
+        public async Task<IActionResult> GetSalesSummary()
+        {
+            return await SendRequest(new GetSalesSummaryQuery(), "Sales summary retrieved");
+        }
+
+        [HttpGet("monthly")]
+        public async Task<IActionResult> GetMonthlySales()
+        {
+            return await SendRequest(new GetMonthlySalesQuery(), "Monthly sales retrieved");
         }
     }
 }

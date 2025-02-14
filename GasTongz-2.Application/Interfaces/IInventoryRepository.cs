@@ -1,5 +1,6 @@
 ﻿using _1_GasTongz.Domain.Entities;
 using System.Threading.Tasks;
+using static _2_GasTongz.Application.DTOs.ViewModels.ViewModels;
 //todo: get usings from git changes
 namespace _2_GasTongz.Application.Interfaces
 {
@@ -57,5 +58,6 @@ namespace _2_GasTongz.Application.Interfaces
 
         Task<Inventory?> GetInventoryByIdAsync(int inventoryId);
         Task<Inventory?> GetInventoryIncludingDeletedAsync(int shopId, int productId);
+        Task<List<LowStockInventoryViewModel>> GetLowStockInventory();
     }
 }
