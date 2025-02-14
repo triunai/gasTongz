@@ -1,4 +1,5 @@
 ﻿using _2_GasTongz.Application.Interfaces;
+using _3_GasTongz.Infrastructure.Repos;
 using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.Logging;
@@ -23,11 +24,13 @@ namespace _3_GasTongz.Infrastructure.Commands.Shops
     public class DeleteShopCommandHandler : IRequestHandler<DeleteShopCommand, Unit>
     {
         private readonly IShopRepository _shopRepository;
+        private readonly IInventoryRepository _inventoryRepository;
         private readonly ILogger<DeleteShopCommandHandler> _logger;
 
-        public DeleteShopCommandHandler(IShopRepository shopRepository, ILogger<DeleteShopCommandHandler> logger)
+        public DeleteShopCommandHandler(IShopRepository shopRepository, ILogger<DeleteShopCommandHandler> logger, IInventoryRepository inventoryRepository)
         {
             _shopRepository = shopRepository;
+            _inventoryRepository = inventoryRepository;
             _logger = logger;
         }
 
@@ -57,6 +60,7 @@ namespace _3_GasTongz.Infrastructure.Commands.Shops
                 }
 
                 await _shopRepository.DeleteAsync(command.Id);
+                await _inventoryRepository.SoftDeleteByShopIdAsync(command.Id);
                 _logger.LogInformation($"Shop with ID {command.Id} marked as deleted.");
                 return Unit.Value;
             }

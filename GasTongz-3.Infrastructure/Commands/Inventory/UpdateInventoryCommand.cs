@@ -66,7 +66,7 @@ namespace Commands.Inventory
             {
                 _logger.LogWarning("Inventory record not found for ShopId: {ShopId}, ProductId: {ProductId}", command.ShopId, command.ProductId);
                 // Throw an exception (or return a failure result) so that the global error handler returns an appropriate response.
-                throw new Exception("Inventory record not found.");
+                return Unit.Value;
             }
 
             try

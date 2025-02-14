@@ -1,4 +1,5 @@
-﻿//todo: _1_GasTongz.Domain.Entities.Inventory cant work
+﻿
+using _1_GasTongz.Domain.Entities;
 using _2_GasTongz.Application.Interfaces;
 using FluentValidation;
 using MediatR;
@@ -12,7 +13,7 @@ namespace Queries.Inventory
 {
 
     // Query request: retrieve inventory by shop and product IDs
-    public record GetInventoryByShopAndProductQuery(int ShopId, int ProductId) : IRequest<_1_GasTongz.Domain.Entities.Inventory?>;
+    public record GetInventoryByShopAndProductQuery(int ShopId, int ProductId) : IRequest<InventoryDto?>;
 
     // Validator for the query
     public class GetInventoryByShopAndProductQueryValidator : AbstractValidator<GetInventoryByShopAndProductQuery>
@@ -29,7 +30,7 @@ namespace Queries.Inventory
     }
 
     // Handler for the query
-    public class GetInventoryByShopAndProductQueryHandler : IRequestHandler<GetInventoryByShopAndProductQuery, _1_GasTongz.Domain.Entities.Inventory?>
+    public class GetInventoryByShopAndProductQueryHandler : IRequestHandler<GetInventoryByShopAndProductQuery, InventoryDto?>
     {
         private readonly IInventoryRepository _inventoryRepository;
         private readonly ILogger<GetInventoryByShopAndProductQueryHandler> _logger;
@@ -42,12 +43,25 @@ namespace Queries.Inventory
             _logger = logger;
         }
 
-        public async Task<_1_GasTongz.Domain.Entities.Inventory?> Handle(GetInventoryByShopAndProductQuery query, CancellationToken cancellationToken)
+        public async Task<InventoryDto?> Handle(GetInventoryByShopAndProductQuery query, CancellationToken cancellationToken)
         {
             try
             {
                 // Retrieve inventory using shop and product IDs
-                return await _inventoryRepository.GetInventoryAsync(query.ShopId, query.ProductId);
+                var inventory = await _inventoryRepository.GetInventoryAsync(query.ShopId, query.ProductId);
+                return inventory != null ? new InventoryDto
+                {
+                    Id = inventory.Id,
+                    ShopId = inventory.ShopId,
+                    ProductId = inventory.ProductId,
+                    Quantity = inventory.Quantity,
+                    Status = inventory.Status,
+                    IsDeleted = inventory.IsDeleted,
+                    CreatedAt = inventory.CreatedAt,
+                    CreatedBy = inventory.CreatedBy,
+                    UpdatedAt = inventory.UpdatedAt,
+                    UpdatedBy = inventory.UpdatedBy
+                } : null;
             }
             catch (Exception ex)
             {

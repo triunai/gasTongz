@@ -14,7 +14,7 @@ namespace _3_GasTongz.Infrastructure.Repos
         private readonly DapperContext _context;
         private readonly ILogger<InventoryRepository> _logger;
         private readonly IShopRepository _shopRepository; // Optional dependency for shop verification
-
+            
         public InventoryRepository(DapperContext context, ILogger<InventoryRepository> logger, IShopRepository shopRepository)
         {
             _context = context;
@@ -37,9 +37,11 @@ namespace _3_GasTongz.Infrastructure.Repos
                     [CreatedBy],
                     [UpdatedAt],
                     [UpdatedBy]
+                    [IsDeleted]  -- Added to select clause
                 FROM [dbo].[Inventory]
                 WHERE [ShopId] = @ShopId
-                  AND [ProductId] = @ProductId;
+                  AND [ProductId] = @ProductId
+                  AND [IsDeleted] = 0;  -- Added IsDeleted check
             ";
 
             return await db.QueryFirstOrDefaultAsync<Inventory>(sql, new { ShopId = shopId, ProductId = productId });
@@ -161,6 +163,51 @@ namespace _3_GasTongz.Infrastructure.Repos
             // If the new quantity is zero, mark as Empty ('E'); otherwise, remain Filled ('F')
             inventory.ChangeStatus(newQuantity == 0 ? 'E' : 'F', updatedBy);
             await UpdateAsync(inventory);
+        }
+
+        public async Task SoftDeleteByShopIdAsync(int shopId)
+        {
+            using var db = _context.CreateConnection();
+            db.Open();
+            var sql = @"  
+                UPDATE [dbo].[Inventory]  
+                SET [IsDeleted] = 1  
+                WHERE [ShopId] = @ShopId AND [IsDeleted] = 0;";
+            await db.ExecuteAsync(sql, new { ShopId = shopId });
+        }
+
+        public async Task SoftDeleteInventoryAsync(int inventoryId)
+        {
+            using var db = _context.CreateConnection();
+            db.Open();
+            var sql = @"  
+                UPDATE [dbo].[Inventory]  
+                SET [IsDeleted] = 1  
+                WHERE [Id] = @Id AND [IsDeleted] = 0;";
+            await db.ExecuteAsync(sql, new { Id = inventoryId });
+        }
+
+        public async Task<IEnumerable<Inventory>> GetAllInventoriesAsync()
+        {
+            using var db = _context.CreateConnection();
+            db.Open();
+            var sql = @"  
+                SELECT *  
+                FROM [dbo].[Inventory]  
+                WHERE [IsDeleted] = 0  
+                ORDER BY [ShopId], [ProductId];";
+            return await db.QueryAsync<Inventory>(sql);
+        }
+
+        public async Task<Inventory?> GetInventoryByIdAsync(int inventoryId)
+        {
+            using var db = _context.CreateConnection();
+            db.Open();
+            var sql = @"  
+        SELECT *  
+        FROM [dbo].[Inventory]  
+        WHERE [Id] = @Id AND [IsDeleted] = 0;";
+            return await db.QueryFirstOrDefaultAsync<Inventory>(sql, new { Id = inventoryId });
         }
     }
 }

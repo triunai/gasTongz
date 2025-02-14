@@ -1,5 +1,7 @@
 ﻿using _2_GasTongz.Application.Interfaces;
 using _3_GasTongz.Infrastructure;
+using _3_GasTongz.Infrastructure.Commands.Inventory;
+using _3_GasTongz.Infrastructure.Queries.Inventory;
 using Commands.Inventory;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -53,6 +55,26 @@ namespace _4_GasTongz.API.Controllers.Inventory
 
             // Send the update command via MediatR using the helper method from BaseController.
             return await SendRequest(command, "Inventory updated successfully");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateInventory([FromBody] CreateInventoryCommand command)
+        {
+            return await SendRequest(command, "Inventory created successfully");
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteInventory(int id)
+        {
+            return await SendRequest(new DeleteInventoryCommand(id), "Inventory deleted successfully");
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAllInventories()
+        {
+            return await SendRequest(
+                new GetAllInventoriesQuery(),
+                "Inventories retrieved successfully");
         }
     }
 }

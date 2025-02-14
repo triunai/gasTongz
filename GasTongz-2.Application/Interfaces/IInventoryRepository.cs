@@ -47,5 +47,14 @@ namespace _2_GasTongz.Application.Interfaces
         /// </summary>
         /// <param name="inventory">The updated inventory entity.</param>
         Task UpdateAsync(Inventory inventory);
+
+
+        Task SoftDeleteByShopIdAsync(int shopId);
+
+        Task SoftDeleteInventoryAsync(int inventoryId);
+
+        Task<IEnumerable<Inventory>> GetAllInventoriesAsync();
+
+        Task<Inventory?> GetInventoryByIdAsync(int inventoryId);
     }
 }
