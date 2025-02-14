@@ -74,9 +74,16 @@ namespace _3_GasTongz.Infrastructure.Commands.Inventory
                     return 0;
                 }
 
+                var existingInventory = await _inventoryRepository.GetInventoryIncludingDeletedAsync(command.ShopId, command.ProductId);
+                if (existingInventory != null && !existingInventory.IsDeleted)
+                {
+                    _logger.LogError($"Active inventory already exists for ShopId: {command.ShopId}, ProductId: {command.ProductId}.");
+                    return 0; // Block creation
+                }
+
                 // Create inventory  
-                var inventory = new InventoryDto(
-                    ShopId: command.ShopId,
+                var inventory = new _1_GasTongz.Domain.Entities.Inventory(
+                    shopId: command.ShopId,
                     productId: command.ProductId,
                     quantity: command.Quantity,
                     status: 'F',

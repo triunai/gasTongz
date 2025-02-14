@@ -209,6 +209,17 @@ namespace _3_GasTongz.Infrastructure.Repos
         WHERE [Id] = @Id AND [IsDeleted] = 0;";
             return await db.QueryFirstOrDefaultAsync<Inventory>(sql, new { Id = inventoryId });
         }
+
+        public async Task<Inventory?> GetInventoryIncludingDeletedAsync(int shopId, int productId)
+        {
+            using var db = _context.CreateConnection();
+            db.Open();
+            var sql = @"
+                SELECT *
+                FROM [dbo].[Inventory]
+                WHERE [ShopId] = @ShopId AND [ProductId] = @ProductId";
+            return await db.QueryFirstOrDefaultAsync<Inventory>(sql, new { ShopId = shopId, ProductId = productId });
+        }
     }
 }
 

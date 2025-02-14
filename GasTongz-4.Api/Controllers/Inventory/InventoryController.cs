@@ -24,7 +24,7 @@ namespace _4_GasTongz.API.Controllers.Inventory
         /// <param name="shopId">ID of the shop.</param>
         /// <param name="productId">ID of the product.</param>
         /// <returns>Inventory details if found; otherwise, NotFound.</returns>
-        [HttpGet]
+        [HttpGet("{id}")]
         public async Task<IActionResult> GetInventory([FromQuery] int shopId, [FromQuery] int productId)
         {
             if (shopId <= 0 || productId <= 0)

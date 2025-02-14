@@ -56,5 +56,6 @@ namespace _2_GasTongz.Application.Interfaces
         Task<IEnumerable<Inventory>> GetAllInventoriesAsync();
 
         Task<Inventory?> GetInventoryByIdAsync(int inventoryId);
+        Task<Inventory?> GetInventoryIncludingDeletedAsync(int shopId, int productId);
     }
 }
