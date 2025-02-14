@@ -36,6 +36,7 @@ namespace _1_GasTongz.Domain.Entities
             UpdatedBy = userId;
             UpdatedAt = DateTime.Now;
         }
+
     }
 
 }

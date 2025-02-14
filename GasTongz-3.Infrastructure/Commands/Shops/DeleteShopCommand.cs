@@ -40,18 +40,20 @@ namespace _3_GasTongz.Infrastructure.Commands.Shops
                 if (!validationResult.IsValid)
                 {
                     _logger.LogError($"Validation failed: {string.Join(", ", validationResult.Errors.Select(e => e.ErrorMessage))}");
-                    throw new ValidationException(validationResult.Errors);
+                    return Unit.Value;
                 }
 
                 var existingShop = await _shopRepository.GetByIdAsync(command.Id);
                 if (existingShop == null)
                 {
                     _logger.LogError($"Shop with ID {command.Id} not found.");
+                    return Unit.Value;
                 }
 
                 if (existingShop.IsDeleted)
                 {
                     _logger.LogError($"Attempted to delete already deleted shop with ID {command.Id}.");
+                    return Unit.Value;
                 }
 
                 await _shopRepository.DeleteAsync(command.Id);

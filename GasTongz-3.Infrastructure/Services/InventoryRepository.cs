@@ -119,7 +119,7 @@ namespace _3_GasTongz.Infrastructure.Repos
             if (shop == null)
             {
                 _logger.LogWarning("Shop with ID {ShopId} not found. Cannot increase inventory.", shopId);
-                throw new Exception($"Shop with ID {shopId} not found.");
+                return;
             }
 
             var inventory = await GetInventoryAsync(shopId, productId);
@@ -145,14 +145,14 @@ namespace _3_GasTongz.Infrastructure.Repos
             if (inventory == null)
             {
                 _logger.LogWarning("Inventory record not found for ShopId: {ShopId}, ProductId: {ProductId}.", shopId, productId);
-                //throw new Exception("Inventory record not found.");
+                return;
             }
 
             if (inventory.Quantity < amount)
             {
                 _logger.LogWarning("Insufficient stock for ShopId: {ShopId}, ProductId: {ProductId}. Current: {Quantity}, Requested Reduction: {Amount}.",
                     shopId, productId, inventory.Quantity, amount);
-                //throw new Exception("Insufficient stock to reduce.");
+                return;
             }
 
             int newQuantity = inventory.Quantity - amount;
