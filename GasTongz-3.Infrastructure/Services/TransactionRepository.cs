@@ -261,23 +261,24 @@ namespace _3_GasTongz.Infrastructure.Repos
             db.Open();
 
             var sql = @"
-            SELECT 
-                t.Id,
-                t.ShopId,
-                t.TransactionDate,
-                t.PaymentMethod,
-                t.PaymentStatus,
-                t.TotalAmount,
-                t.ReceiptImagePath,
-                t.CreatedAt,
-                t.CreatedBy,
-                t.UpdatedAt,
-                t.UpdatedBy
-            FROM [dbo].[Transactions] t
-            ORDER BY t.TransactionDate DESC
-            OFFSET 0 ROWS FETCH NEXT 10 ROWS ONLY;";
+                SELECT 
+                    t.*,
+                    d.*
+                FROM [dbo].[Transactions] t
+                INNER JOIN [dbo].[TransactionDetails] d ON t.Id = d.TransactionId
+                ORDER BY t.TransactionDate DESC
+                OFFSET 0 ROWS FETCH NEXT 10 ROWS ONLY;";
 
-            return (await db.QueryAsync<TransactionSummaryDto>(sql)).ToList();
+            return (await db.QueryAsync<TransactionSummaryDto, TransactionDetailDto, TransactionSummaryDto>(
+                sql,
+                (transaction, detail) =>
+                {
+                    transaction.TransactionDetails ??= new List<TransactionDetailDto>();
+                    transaction.TransactionDetails.Add(detail);
+                    return transaction;
+                },
+                splitOn: "Id"
+            )).ToList();
         }
     }
 }

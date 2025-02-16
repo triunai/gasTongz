@@ -6,10 +6,6 @@ using System.Threading.Tasks;
 
 namespace _3_GasTongz.Application.DTOs
 {
-    public class TransactionDto : TransactionSummaryDto
-    {
-        public List<TransactionDetailDto> TransactionDetails { get; set; }
-    }
 
     public class TransactionSummaryDto
     {
@@ -24,6 +20,9 @@ namespace _3_GasTongz.Application.DTOs
         public int? CreatedBy { get; set; }
         public DateTime UpdatedAt { get; set; }
         public int? UpdatedBy { get; set; }
+
+        public List<TransactionDetailDto> TransactionDetails { get; set; } = new();
+
     }
 
     // TransactionDetailDto.cs (for detail view)
