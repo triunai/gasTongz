@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace _4_GasTongz.API.Controllers
 {
-    [Route("api/[controller]")]
+    
     [ApiController]
     public class ShopsController : BaseController
     { 

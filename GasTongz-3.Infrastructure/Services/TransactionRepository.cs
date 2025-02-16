@@ -7,17 +7,21 @@ using System.Data;
 using static _2_GasTongz.Application.DTOs.Reports.ReportDtos;
 using static _2_GasTongz.Application.DTOs.ViewModels.ViewModels;
 using System.Globalization;
+using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Logging;
 
 namespace _3_GasTongz.Infrastructure.Repos
 {
     public class TransactionRepository : ITransactionRepository
     {
         private readonly DapperContext _context;
+        private readonly ILogger<TransactionRepository> _logger;
 
         // Inject DapperContext instead of IDbConnection  
-        public TransactionRepository(DapperContext context)
+        public TransactionRepository(DapperContext context, ILogger<TransactionRepository> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         public async Task<int> CreateAsync(Transaction transaction)
@@ -224,34 +228,30 @@ namespace _3_GasTongz.Infrastructure.Repos
             db.Open();
 
             var sql = @"
-                SELECT 
-                    YEAR([Date]) AS [Year], 
-                    MONTH([Date]) AS [Month], 
-                    SUM([TotalAmount]) AS [SalesAmount]
-                FROM [Transactions]
-                GROUP BY YEAR([Date]), MONTH([Date])
-                ORDER BY [Year], [Month]";
+                        SELECT 
+                            YEAR([TransactionDate]) AS [Year], 
+                            MONTH([TransactionDate]) AS [Month], 
+                            SUM([TotalAmount]) AS [SalesAmount]
+                        FROM [Transactions]
+                        GROUP BY YEAR([TransactionDate]), MONTH([TransactionDate])
+                        ORDER BY [Year], [Month]";
 
-            var monthlySales = await db.QueryAsync<MonthlySalesDto>(sql);
-
-            return monthlySales.Select(dto =>
+            try
             {
-                var monthName = DateTimeFormatInfo.CurrentInfo.GetMonthName(dto.Month);
-                return new MonthlySalesViewModel
+                var monthlySales = await db.QueryAsync<MonthlySalesDto>(sql);
+                return monthlySales.Select(dto => new MonthlySalesViewModel
                 {
-                    Month = $"{monthName} {dto.Year}",
-                    SalesAmount = dto.SalesAmount
-                };
-            }).ToList();
-        }
-
-
-        private string GetMonthName(string month)
-        {
-            int monthNumber = int.Parse(month.Split('-')[1]);
-            return DateTimeFormatInfo.CurrentInfo.GetMonthName(monthNumber);
+                    Year = dto.Year,
+                    Month = dto.Month,
+                    SalesAmount = dto.SalesAmount,
+                    MonthName = $"{DateTimeFormatInfo.CurrentInfo.GetMonthName(dto.Month)} {dto.Year}"
+                }).ToList();
+            }
+            catch (SqlException ex)
+            {
+                _logger.LogError(ex, "Error executing monthly sales query");
+                return new List<MonthlySalesViewModel>();
+            }
         }
     }
-
-
 }

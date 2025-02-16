@@ -1,4 +1,5 @@
 ﻿using _2_GasTongz.Application.Interfaces;
+using _3_GasTongz.Infrastructure.Repos;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using System;
@@ -29,6 +30,7 @@ namespace Queries.Transactions.Sales
             try
             {
                 return await _transactionRepository.GetMonthlySales();
+
             }
             catch (Exception ex)
             {

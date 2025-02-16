@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 namespace _4_GasTongz.API.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     public abstract class BaseController : ControllerBase
     {
         private readonly IMediator _mediator;

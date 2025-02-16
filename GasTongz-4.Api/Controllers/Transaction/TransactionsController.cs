@@ -7,7 +7,7 @@ using Queries.Transactions.Sales;
 
 namespace _4_GasTongz.API.Controllers.Transaction
 {
-    [Route("api/[controller]")]
+    
     [ApiController]
     public class TransactionsController : BaseController
     {

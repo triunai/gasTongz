@@ -46,15 +46,18 @@ builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddProblemDetails();
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAll",
+    options.AddPolicy("AllowReact",
         policy => policy
-            .AllowAnyOrigin()
+            .WithOrigins("http://localhost:5173") // Update to your frontend URL
             .AllowAnyMethod()
-            .AllowAnyHeader());
+            .AllowAnyHeader()
+            .AllowCredentials());
 });
 
 var app = builder.Build();
-app.UseCors("AllowAll");
+
+
+app.UseCors("AllowReact");
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -62,6 +65,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 app.UseExceptionHandler();
+
+
 
 app.UseHttpsRedirection();
 

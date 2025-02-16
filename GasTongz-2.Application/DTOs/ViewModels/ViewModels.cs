@@ -18,8 +18,10 @@ namespace _2_GasTongz.Application.DTOs.ViewModels
         // ViewModels/MonthlySalesViewModel.cs
         public class MonthlySalesViewModel
         {
-            public string Month { get; set; }
+            public int Year { get; set; }
+            public int Month { get; set; }
             public decimal SalesAmount { get; set; }
+            public string MonthName { get; set; } // New property for formatted month
         }
 
         // ViewModels/LowStockInventoryViewModel.cs

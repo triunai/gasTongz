@@ -10,7 +10,6 @@ using Queries.Inventory;
 
 namespace _4_GasTongz.API.Controllers.Inventory
 {
-    [Route("api/[controller]")]
     [ApiController]
     public class InventoryController : BaseController
     {
