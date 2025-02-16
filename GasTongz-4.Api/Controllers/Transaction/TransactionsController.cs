@@ -1,9 +1,9 @@
-﻿using _4_GasTongz.API.Controllers;
+﻿using _3_GasTongz.Infrastructure.Queries.Transactions;
+using _4_GasTongz.API.Controllers;
 using Commands.Transaction;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Queries.Transactions;
-using Queries.Transactions.Sales;
 
 namespace _4_GasTongz.API.Controllers.Transaction
 {
@@ -39,15 +39,22 @@ namespace _4_GasTongz.API.Controllers.Transaction
         }
 
         [HttpGet("summary")]
-        public async Task<IActionResult> GetSalesSummary()
+        public async Task<IActionResult> GetTransactionsSummary()
         {
-            return await SendRequest(new GetSalesSummaryQuery(), "Sales summary retrieved");
+            return await SendRequest(new GetTransactionsSummaryQuery(), "Sales summary retrieved");
         }
 
         [HttpGet("monthly")]
-        public async Task<IActionResult> GetMonthlySales()
+        public async Task<IActionResult> GetMonthlyTransactions()
         {
-            return await SendRequest(new GetMonthlySalesQuery(), "Monthly sales retrieved");
+            return await SendRequest(new GetMonthlyTransactionsQuery(), "Monthly sales retrieved");
         }
+
+        [HttpGet("recent")]
+        public async Task<IActionResult> GetRecentTransactions()
+        {
+            return await SendRequest(new GetRecentTransactionsQuery(), "Recent transactions retrieved");
+        }
+
     }
 }

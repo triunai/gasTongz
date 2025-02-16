@@ -1,5 +1,6 @@
 ﻿using _1_GasTongz.Domain.Entities;
 using _1_GasTongz.Domain.Enums;
+using _3_GasTongz.Application.DTOs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,8 +30,10 @@ namespace _2_GasTongz.Application.Interfaces
             int? userId
         );
 
-        Task<SalesSummaryViewModel> GetSalesSummary();
-        Task<List<MonthlySalesViewModel>> GetMonthlySales();
+        Task<TransactionsSummaryViewModel> GetTransactionsSummary();
+        Task<List<MonthlyTransactionsViewModel>> GetMonthlyTransactions();
+        Task<List<TransactionSummaryDto>> GetRecentTransactions();
+
     }
 
 

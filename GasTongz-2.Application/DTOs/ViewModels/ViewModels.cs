@@ -8,15 +8,15 @@ namespace _2_GasTongz.Application.DTOs.ViewModels
 {
     public class ViewModels
     {
-        // ViewModels/SalesSummaryViewModel.cs
-        public class SalesSummaryViewModel
+        // ViewModels/TransactionsSummaryViewModel.cs
+        public class TransactionsSummaryViewModel
         {
             public decimal TotalSales { get; set; }
             public decimal AverageTransaction { get; set; }
         }
 
-        // ViewModels/MonthlySalesViewModel.cs
-        public class MonthlySalesViewModel
+        // ViewModels/MonthlyTransactionsViewModel.cs
+        public class MonthlyTransactionsViewModel
         {
             public int Year { get; set; }
             public int Month { get; set; }

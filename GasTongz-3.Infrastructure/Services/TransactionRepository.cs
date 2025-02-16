@@ -9,6 +9,7 @@ using static _2_GasTongz.Application.DTOs.ViewModels.ViewModels;
 using System.Globalization;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Logging;
+using _3_GasTongz.Application.DTOs;
 
 namespace _3_GasTongz.Infrastructure.Repos
 {
@@ -202,7 +203,7 @@ namespace _3_GasTongz.Infrastructure.Repos
                     );
                 }
 
-        public async Task<SalesSummaryViewModel> GetSalesSummary()
+        public async Task<TransactionsSummaryViewModel> GetTransactionsSummary()
         {
             using var db = _context.CreateConnection();
             db.Open();
@@ -215,14 +216,14 @@ namespace _3_GasTongz.Infrastructure.Repos
 
             var result = await db.QueryFirstAsync<SalesSummaryDto>(sql);
 
-            return new SalesSummaryViewModel
+            return new TransactionsSummaryViewModel
             {
                 TotalSales = result.TotalSales,
                 AverageTransaction = result.AverageTransaction
             };
         }
 
-        public async Task<List<MonthlySalesViewModel>> GetMonthlySales()
+        public async Task<List<MonthlyTransactionsViewModel>> GetMonthlyTransactions()
         {
             using var db = _context.CreateConnection();
             db.Open();
@@ -239,7 +240,7 @@ namespace _3_GasTongz.Infrastructure.Repos
             try
             {
                 var monthlySales = await db.QueryAsync<MonthlySalesDto>(sql);
-                return monthlySales.Select(dto => new MonthlySalesViewModel
+                return monthlySales.Select(dto => new MonthlyTransactionsViewModel
                 {
                     Year = dto.Year,
                     Month = dto.Month,
@@ -250,8 +251,33 @@ namespace _3_GasTongz.Infrastructure.Repos
             catch (SqlException ex)
             {
                 _logger.LogError(ex, "Error executing monthly sales query");
-                return new List<MonthlySalesViewModel>();
+                return new List<MonthlyTransactionsViewModel>();
             }
+        }
+
+        public async Task<List<TransactionSummaryDto>> GetRecentTransactions()
+        {
+            using var db = _context.CreateConnection();
+            db.Open();
+
+            var sql = @"
+            SELECT 
+                t.Id,
+                t.ShopId,
+                t.TransactionDate,
+                t.PaymentMethod,
+                t.PaymentStatus,
+                t.TotalAmount,
+                t.ReceiptImagePath,
+                t.CreatedAt,
+                t.CreatedBy,
+                t.UpdatedAt,
+                t.UpdatedBy
+            FROM [dbo].[Transactions] t
+            ORDER BY t.TransactionDate DESC
+            OFFSET 0 ROWS FETCH NEXT 10 ROWS ONLY;";
+
+            return (await db.QueryAsync<TransactionSummaryDto>(sql)).ToList();
         }
     }
 }

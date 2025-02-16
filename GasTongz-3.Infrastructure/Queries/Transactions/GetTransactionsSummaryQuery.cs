@@ -9,32 +9,32 @@ using System.Threading.Tasks;
 using static _2_GasTongz.Application.DTOs.Reports.ReportDtos;
 using static _2_GasTongz.Application.DTOs.ViewModels.ViewModels;
 
-namespace Queries.Transactions.Sales
+namespace Queries.Transactions
 {
-    public record GetSalesSummaryQuery : IRequest<SalesSummaryViewModel>;
-    public class GetSalesSummaryQueryHandler : IRequestHandler<GetSalesSummaryQuery, SalesSummaryViewModel>
+    public record GetTransactionsSummaryQuery : IRequest<TransactionsSummaryViewModel>;
+    public class GetTransactionsSummaryQueryHandler : IRequestHandler<GetTransactionsSummaryQuery, TransactionsSummaryViewModel>
     {
         private readonly ITransactionRepository _transactionRepository;
-        private readonly ILogger<GetSalesSummaryQueryHandler> _logger;
+        private readonly ILogger<GetTransactionsSummaryQueryHandler> _logger;
 
-        public GetSalesSummaryQueryHandler(ITransactionRepository transactionRepository, ILogger<GetSalesSummaryQueryHandler> logger)
+        public GetTransactionsSummaryQueryHandler(ITransactionRepository transactionRepository, ILogger<GetTransactionsSummaryQueryHandler> logger)
         {
             _transactionRepository = transactionRepository;
             _logger = logger;
         }
 
-        public async Task<SalesSummaryViewModel> Handle(
-            GetSalesSummaryQuery request,
+        public async Task<TransactionsSummaryViewModel> Handle(
+            GetTransactionsSummaryQuery request,
             CancellationToken cancellationToken)
         {
             try
             {
-                return await _transactionRepository.GetSalesSummary();
+                return await _transactionRepository.GetTransactionsSummary();
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error retrieving sales summary.");
-                return new SalesSummaryViewModel();
+                return new TransactionsSummaryViewModel();
             }
         }
     }
